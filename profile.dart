@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
+import 'backend.dart'; // Import the new backend service
 
 class MyProfile extends StatefulWidget {
   @override
@@ -11,6 +10,7 @@ class _MyProfileState extends State<MyProfile> {
   List<Map<String, dynamic>> entries = [];
   bool _isLoading = true;
   bool _showDeleteSuccess = false;
+  final ProfileDataService _dataService = ProfileDataService();
 
   @override
   void initState() {
@@ -23,33 +23,21 @@ class _MyProfileState extends State<MyProfile> {
       _isLoading = true;
     });
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String>? entryStrings = prefs.getStringList('entries');
+    // Use the backend service to load data
+    final loadedEntries = await _dataService.loadProfileData();
 
-    // Debug: Print the retrieved entries
-    print('Retrieved Entries: $entryStrings');
-
-    if (entryStrings != null) {
-      setState(() {
-        entries = entryStrings.map((entry) => jsonDecode(entry) as Map<String, dynamic>).toList();
-        _isLoading = false;
-      });
-    } else {
-      setState(() {
-        _isLoading = false;
-      });
-    }
+    setState(() {
+      entries = loadedEntries;
+      _isLoading = false;
+    });
   }
 
   // Delete an entry
   Future<void> _deleteEntry(int index) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String>? entryStrings = prefs.getStringList('entries') ?? [];
+    // Use the backend service to delete data
+    bool success = await _dataService.deleteEntry(index);
 
-    if (index >= 0 && index < entryStrings.length) {
-      entryStrings.removeAt(index);
-      await prefs.setStringList('entries', entryStrings);
-
+    if (success) {
       setState(() {
         entries.removeAt(index);
         _showDeleteSuccess = true;
