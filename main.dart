@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert'; // Add this import for jsonDecode
 import 'name.dart'; // Import the name.dart file
-import 'button.dart'; //Import the button.dart file
-import 'namebutton.dart'; //Import the namebutton.dart file
-import 'buttonaction.dart'; //Import the buttonaction.dart file
+import 'button.dart'; // Import the button.dart file
+import 'namebutton.dart'; // Import the namebutton.dart file
+import 'buttonaction.dart'; // Import the buttonaction.dart file
 import 'register.dart'; // Import the register.dart file
-import 'profile.dart'; //Import the profile.dart file
+import 'profile.dart'; // Import the profile.dart file
+import 'signup.dart'; // Import the signup.dart file
+import 'login.dart'; // Import the login.dart file
+import 'profilepage.dart'; // Import the profilepage.dart file
+
 void main() {
   runApp(MyApp());
 }
@@ -15,8 +21,46 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: HomeScreen(),
+      home: Wrapper(), // Use the Wrapper widget as the home
     );
+  }
+}
+
+// Wrapper widget to check login status and retrieve user data
+class Wrapper extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: _checkLoginStatus(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        } else {
+          if (snapshot.data?['isLoggedIn'] == true) {
+            // User is logged in, navigate to ProfilePage with userData
+            return ProfilePage(userData: snapshot.data?['userData'] ?? {});
+          } else {
+            // User is not logged in, show HomeScreen
+            return HomeScreen();
+          }
+        }
+      },
+    );
+  }
+
+  // Method to check login status and retrieve userData
+  Future<Map<String, dynamic>> _checkLoginStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+    final userDataString = prefs.getString('userData');
+    final userData = userDataString != null ? jsonDecode(userDataString) : {};
+
+    return {
+      'isLoggedIn': isLoggedIn,
+      'userData': userData,
+    };
   }
 }
 
@@ -122,6 +166,26 @@ class HomeScreen extends StatelessWidget {
                 );
               },
             ),
+            ListTile(
+              leading: const Icon(Icons.person_add),
+              title: const Text('Sign Up'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SignupPage()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.login),
+              title: const Text('Login'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginPage()),
+                );
+              },
+            ),
           ],
         ),
       ),
@@ -135,6 +199,8 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
+
+// Rest of your code (CalculatorPage, TablePage, etc.)
 
 class CalculatorPage extends StatefulWidget {
   @override
