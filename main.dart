@@ -10,6 +10,9 @@ import 'profile.dart'; // Import the profile.dart file
 import 'signup.dart'; // Import the signup.dart file
 import 'login.dart'; // Import the login.dart file
 import 'profilepage.dart'; // Import the profilepage.dart file
+import 'vertical_scroll.dart'; // Import the vertical_scroll.dart file
+import 'horizontal_scroll.dart'; // Import the horizontal_scroll.dart file
+import 'nolistview.dart'; // Import the nolistview.dart.dart file
 
 void main() {
   runApp(MyApp());
@@ -154,6 +157,33 @@ class HomeScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => RegisterPage()), // Navigate to RegisterPage
+                );
+              },
+            ),
+            ListTile(
+              title: const Text('Vertical'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ImageListScreen()),
+                );
+              },
+            ),
+            ListTile(
+              title: const Text('Horizontal'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HorizontalImageGallery()),
+                );
+              },
+            ),
+            ListTile(
+              title: const Text('No List'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ImageGridGallery()),
                 );
               },
             ),
