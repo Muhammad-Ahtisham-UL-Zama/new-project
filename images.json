@@ -1,0 +1,14 @@
+{
+  "assetImages": [
+    "assets/image/image1.jpg",
+    "assets/image/image2.jpg",
+    "assets/image/image3.jpg",
+    "assets/image/image4.jpg"
+  ],
+  "networkImages": [
+    "https://upload.wikimedia.org/wikipedia/en/9/94/NarutoCoverTankobon1.jpg",
+    "https://wallpapercave.com/wp/wp5165727.jpg",
+    "https://wallpapercave.com/wp/wp2561483.jpg",
+    "https://wallpapercave.com/wp/wp2561487.jpg"
+  ]
+}
