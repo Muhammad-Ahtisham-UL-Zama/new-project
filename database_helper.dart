@@ -28,8 +28,9 @@ class DatabaseHelper {
     String path = join(await getDatabasesPath(), 'user_database.db');
     return await openDatabase(
       path,
-      version: 1,
+      version: 2, // Increased version to handle migration
       onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
     );
   }
 
@@ -39,9 +40,19 @@ class DatabaseHelper {
       CREATE TABLE users(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         email TEXT UNIQUE,
-        password TEXT
+        password TEXT,
+        is_logged_in INTEGER DEFAULT 0
       )
     ''');
+  }
+
+  // Handle database upgrade
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.execute('''
+        ALTER TABLE users ADD COLUMN is_logged_in INTEGER DEFAULT 0
+      ''');
+    }
   }
 
   // Insert a new user
@@ -56,14 +67,58 @@ class DatabaseHelper {
     return await db.query('users');
   }
 
-  // Fetch a user by email
-  // Future<Map<String, dynamic>?> getUserByEmail(String email) async {
-  //   Database db = await database;
-  //   List<Map<String, dynamic>> result = await db.query(
-  //     'users',
-  //     where: 'email = ?',
-  //     whereArgs: [email],
-  //   );
-  //   return result.isNotEmpty ? result.first : null;
-  // }
+  // Login method to validate user credentials
+  Future<bool> loginUser(String email, String password) async {
+    Database db = await database;
+
+    // First, reset all logged-in states
+    await db.update('users', {'is_logged_in': 0});
+
+    // Then, validate and set current user as logged in
+    List<Map<String, dynamic>> result = await db.query(
+      'users',
+      where: 'email = ? AND password = ?',
+      whereArgs: [email, password],
+    );
+
+    if (result.isNotEmpty) {
+      // Set this user as logged in
+      await db.update(
+          'users',
+          {'is_logged_in': 1},
+          where: 'email = ?',
+          whereArgs: [email]
+      );
+      return true;
+    }
+    return false;
+  }
+
+  // Check if a user is currently logged in
+  Future<bool> isUserLoggedIn() async {
+    Database db = await database;
+    List<Map<String, dynamic>> result = await db.query(
+      'users',
+      where: 'is_logged_in = ?',
+      whereArgs: [1],
+    );
+    return result.isNotEmpty;
+  }
+
+  // Logout method
+  Future<void> logoutUser() async {
+    Database db = await database;
+    await db.update('users', {'is_logged_in': 0});
+  }
+
+  // Get currently logged-in user
+  Future<Map<String, dynamic>?> getCurrentUser() async {
+    Database db = await database;
+    List<Map<String, dynamic>> result = await db.query(
+      'users',
+      where: 'is_logged_in = ?',
+      whereArgs: [1],
+    );
+    return result.isNotEmpty ? result.first : null;
+  }
 }

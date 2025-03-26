@@ -12,7 +12,9 @@ import 'login.dart'; // Import the login.dart file
 import 'profilepage.dart'; // Import the profilepage.dart file
 import 'vertical_scroll.dart'; // Import the vertical_scroll.dart file
 import 'horizontal_scroll.dart'; // Import the horizontal_scroll.dart file
-import 'nolistview.dart'; // Import the nolistview.dart.dart file
+import 'nolistview.dart'; // Import the nolistview.dart file
+import 'signupsqlite.dart'; // Import the signupsqlite.dart file
+import 'loginsqlite.dart'; // Import the loginsqlite.dart file
 
 void main() {
   runApp(MyApp());
@@ -95,6 +97,24 @@ class HomeScreen extends StatelessWidget {
               title: const Text('Home'),
               onTap: () {
                 Navigator.pop(context); // Close the drawer
+              },
+            ),
+            ListTile(
+              title: const Text('SQlite'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SignupPagesq()),
+                );
+              },
+            ),
+            ListTile(
+              title: const Text('LoginSQ'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginPagesq()),
+                );
               },
             ),
             ListTile(

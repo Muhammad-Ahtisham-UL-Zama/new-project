@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'database_helper.dart'; // Import your DatabaseHelper class
+import 'database_helper.dart';
+import 'loginsqlite.dart';
 
 class ShowDataPage extends StatefulWidget {
   @override
@@ -7,14 +8,14 @@ class ShowDataPage extends StatefulWidget {
 }
 
 class _ShowDataPageState extends State<ShowDataPage> {
-  List<Map<String, dynamic>> _users = []; // List to store user data
-  bool _isLoading = false; // To show a loading indicator
-  TextEditingController _searchController = TextEditingController(); // For search functionality
+  List<Map<String, dynamic>> _users = [];
+  bool _isLoading = false;
+  TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _loadUsers(); // Load users when the page is initialized
+    _loadUsers();
   }
 
   // Fetch users from the database
@@ -50,6 +51,19 @@ class _ShowDataPageState extends State<ShowDataPage> {
     }).toList();
   }
 
+  // Logout method
+  Future<void> _logout() async {
+    // Clear logged-in state in database
+    await DatabaseHelper().logoutUser();
+
+    // Navigate back to login page and remove all previous routes
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => LoginPagesq()),
+          (Route<dynamic> route) => false,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final filteredUsers = _filterUsers(_searchController.text);
@@ -60,7 +74,11 @@ class _ShowDataPageState extends State<ShowDataPage> {
         actions: [
           IconButton(
             icon: Icon(Icons.refresh),
-            onPressed: _loadUsers, // Refresh the data
+            onPressed: _loadUsers,
+          ),
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: _logout,
           ),
         ],
       ),
@@ -84,11 +102,11 @@ class _ShowDataPageState extends State<ShowDataPage> {
           ),
           Expanded(
             child: _isLoading
-                ? Center(child: CircularProgressIndicator()) // Show loading indicator
+                ? Center(child: CircularProgressIndicator())
                 : filteredUsers.isEmpty
-                ? Center(child: Text('No data found')) // Show message if no data
+                ? Center(child: Text('No data found'))
                 : SingleChildScrollView(
-              scrollDirection: Axis.horizontal, // Allow horizontal scrolling
+              scrollDirection: Axis.horizontal,
               child: DataTable(
                 columns: [
                   DataColumn(label: Text('ID')),
@@ -98,9 +116,9 @@ class _ShowDataPageState extends State<ShowDataPage> {
                 rows: filteredUsers.map((user) {
                   return DataRow(
                     cells: [
-                      DataCell(Text(user['id'].toString())), // ID
-                      DataCell(Text(user['email'])), // Email
-                      DataCell(Text(user['password'])), // Password
+                      DataCell(Text(user['id'].toString())),
+                      DataCell(Text(user['email'])),
+                      DataCell(Text(user['password'])),
                     ],
                   );
                 }).toList(),
