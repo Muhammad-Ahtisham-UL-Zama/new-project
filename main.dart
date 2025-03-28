@@ -15,6 +15,7 @@ import 'horizontal_scroll.dart'; // Import the horizontal_scroll.dart file
 import 'nolistview.dart'; // Import the nolistview.dart file
 import 'signupsqlite.dart'; // Import the signupsqlite.dart file
 import 'loginsqlite.dart'; // Import the loginsqlite.dart file
+import 'student_page.dart'; // Import the student_page.dart file
 
 void main() {
   runApp(MyApp());
@@ -114,6 +115,15 @@ class HomeScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => LoginPagesq()),
+                );
+              },
+            ),
+            ListTile(
+              title: const Text('Marks Cal'), // New menu item
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => StudentsPage()), // Navigate to NamePage
                 );
               },
             ),
