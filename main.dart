@@ -16,6 +16,7 @@ import 'nolistview.dart'; // Import the nolistview.dart file
 import 'signupsqlite.dart'; // Import the signupsqlite.dart file
 import 'loginsqlite.dart'; // Import the loginsqlite.dart file
 import 'student_page.dart'; // Import the student_page.dart file
+import 'api_data.dart'; // Import the api_data.dart file
 
 void main() {
   runApp(MyApp());
@@ -98,6 +99,15 @@ class HomeScreen extends StatelessWidget {
               title: const Text('Home'),
               onTap: () {
                 Navigator.pop(context); // Close the drawer
+              },
+            ),
+            ListTile(
+              title: const Text('API DATA'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => StudentResultsPage()),
+                );
               },
             ),
             ListTile(
