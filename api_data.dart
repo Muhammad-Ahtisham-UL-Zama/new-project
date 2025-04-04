@@ -185,75 +185,6 @@ class _StudentResultsPageState extends State<StudentResultsPage> {
     double totalCreditHours = 0;
     double totalWeightedGPA = 0;
 
-    final rows = semesterResults.map((result) {
-      final marks = double.tryParse(result['obtainedmarks']?.toString() ?? '0') ?? 0;
-      String grade = result['grade'];
-      double gpa = 0.0;
-
-      if (marks == 0 && result['consider_status'] == 'NA') {
-        grade = 'NA';
-      } else if (result['consider_status'] != 'NA') {
-        grade = _calculateGrade(marks);
-        gpa = _calculateGPA(marks);
-
-        final creditHours = double.tryParse(result['credithours']?.toString() ?? '0') ?? 0;
-        totalCreditHours += creditHours;
-        totalWeightedGPA += gpa * creditHours;
-      }
-
-      final creditHours = double.tryParse(result['credithours']?.toString() ?? '0') ?? 0;
-      final courseCode = result['coursecode'] ?? '';
-
-      return DataRow(
-        cells: [
-          DataCell(
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(courseCode, style: TextStyle(fontWeight: FontWeight.w500)),
-                Text(
-                  result['coursetitle'] ?? '',
-                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-          DataCell(Center(child: Text(result['totalmarks']?.toString() ?? ''))),
-          DataCell(Center(child: Text(result['obtainedmarks']?.toString() ?? ''))),
-          DataCell(Center(child: Text(creditHours.toString()))),
-          DataCell(Center(child: Text(gpa.toStringAsFixed(2)))),
-          DataCell(
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: _getGradeColor(grade).withOpacity(0.2),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                grade,
-                style: TextStyle(
-                  color: _getGradeColor(grade),
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            placeholder: false,
-          ),
-          DataCell(Text(result['consider_status'] ?? '')),
-          DataCell(
-            IconButton(
-              icon: Icon(Icons.delete, color: Colors.red),
-              onPressed: () => _deleteResult(result['id']),
-            ),
-          ),
-        ],
-      );
-    }).toList();
-
-    final semesterGPA = totalCreditHours > 0 ? totalWeightedGPA / totalCreditHours : 0;
-
     return Card(
       margin: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       elevation: 2,
@@ -271,16 +202,89 @@ class _StudentResultsPageState extends State<StudentResultsPage> {
               horizontalMargin: 16,
               columnSpacing: 16,
               columns: const [
-                DataColumn(label: Text('Course', style: TextStyle(fontWeight: FontWeight.bold))),
+                DataColumn(
+                  label: Text('Code', style: TextStyle(fontWeight: FontWeight.bold)),
+                  tooltip: 'Course Code',
+                ),
+                DataColumn(
+                  label: Text('Title', style: TextStyle(fontWeight: FontWeight.bold)),
+                  tooltip: 'Course Title',
+                ),
                 DataColumn(label: Text('Total', style: TextStyle(fontWeight: FontWeight.bold))),
                 DataColumn(label: Text('Obtained', style: TextStyle(fontWeight: FontWeight.bold))),
                 DataColumn(label: Text('Credits', style: TextStyle(fontWeight: FontWeight.bold))),
                 DataColumn(label: Text('GPA', style: TextStyle(fontWeight: FontWeight.bold))),
                 DataColumn(label: Text('Grade', style: TextStyle(fontWeight: FontWeight.bold))),
                 DataColumn(label: Text('Status', style: TextStyle(fontWeight: FontWeight.bold))),
-                DataColumn(label: Text('Delete', style: TextStyle(fontWeight: FontWeight.bold))),
+                DataColumn(label: Text('Action', style: TextStyle(fontWeight: FontWeight.bold))),
               ],
-              rows: rows,
+              rows: semesterResults.map((result) {
+                final marks = double.tryParse(result['obtainedmarks']?.toString() ?? '0') ?? 0;
+                String grade = result['grade'];
+                double gpa = 0.0;
+                final creditHours = double.tryParse(result['credithours']?.toString() ?? '0') ?? 0;
+
+                if (marks == 0 && result['consider_status'] == 'NA') {
+                  grade = 'NA';
+                } else if (result['consider_status'] != 'NA') {
+                  grade = _calculateGrade(marks);
+                  gpa = _calculateGPA(marks);
+                  totalCreditHours += creditHours;
+                  totalWeightedGPA += gpa * creditHours;
+                }
+
+                return DataRow(
+                  cells: [
+                    DataCell(
+                      Container(
+                        constraints: BoxConstraints(maxWidth: 80),
+                        child: Text(
+                          result['coursecode'] ?? '',
+                          style: TextStyle(fontWeight: FontWeight.w500),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ),
+                    DataCell(
+                      Container(
+                        constraints: BoxConstraints(maxWidth: 200),
+                        child: Text(
+                          result['coursetitle'] ?? '',
+                          style: TextStyle(fontSize: 12),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ),
+                    DataCell(Center(child: Text(result['totalmarks']?.toString() ?? ''))),
+                    DataCell(Center(child: Text(result['obtainedmarks']?.toString() ?? ''))),
+                    DataCell(Center(child: Text(creditHours.toString()))),
+                    DataCell(Center(child: Text(gpa.toStringAsFixed(2)))),
+                    DataCell(
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: _getGradeColor(grade).withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          grade,
+                          style: TextStyle(
+                            color: _getGradeColor(grade),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                    DataCell(Text(result['consider_status'] ?? '')),
+                    DataCell(
+                      IconButton(
+                        icon: Icon(Icons.delete, color: Colors.red),
+                        onPressed: () => _deleteResult(result['id']),
+                      ),
+                    ),
+                  ],
+                );
+              }).toList(),
             ),
           ),
           Container(
@@ -314,7 +318,7 @@ class _StudentResultsPageState extends State<StudentResultsPage> {
                     ],
                   ),
                   child: Text(
-                    semesterGPA.toStringAsFixed(2),
+                    (totalCreditHours > 0 ? totalWeightedGPA / totalCreditHours : 0).toStringAsFixed(2),
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
@@ -658,7 +662,7 @@ class _StudentResultsPageState extends State<StudentResultsPage> {
                   ],
                 );
               }).toList(),
-              SizedBox(height: 80), // Extra space at bottom for FAB
+              SizedBox(height: 80),
             ],
           ),
         ),

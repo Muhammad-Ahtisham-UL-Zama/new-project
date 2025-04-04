@@ -35,25 +35,25 @@ class DatabaseHelper {
   Future _createDB(Database db, int version) async {
     print("Creating new database tables...");
     await db.execute('''
-    CREATE TABLE student_results (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      studentname TEXT NOT NULL,
-      fathername TEXT NOT NULL,
-      progname TEXT NOT NULL,
-      shift TEXT NOT NULL,
-      rollno TEXT NOT NULL,
-      coursecode TEXT NOT NULL,
-      coursetitle TEXT NOT NULL,
-      credithours REAL NOT NULL,
-      obtainedmarks TEXT NOT NULL,
-      mysemester TEXT NOT NULL,
-      consider_status TEXT NOT NULL,
-      is_deleted INTEGER DEFAULT 0,
-      totalmarks INTEGER DEFAULT 100, // Added totalmarks
-      grade TEXT DEFAULT 'F',         // Added grade
-      UNIQUE(rollno, coursecode, mysemester)
-    )
-    ''');
+  CREATE TABLE student_results (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    studentname TEXT NOT NULL,
+    fathername TEXT NOT NULL,
+    progname TEXT NOT NULL,
+    shift TEXT NOT NULL,
+    rollno TEXT NOT NULL,
+    coursecode TEXT NOT NULL,
+    coursetitle TEXT NOT NULL,
+    credithours REAL NOT NULL,
+    obtainedmarks TEXT NOT NULL,
+    mysemester TEXT NOT NULL,
+    consider_status TEXT NOT NULL,
+    is_deleted INTEGER DEFAULT 0,
+    totalmarks INTEGER DEFAULT 100,
+    grade TEXT DEFAULT 'F',
+    UNIQUE(rollno, coursecode, mysemester)
+  )
+  ''');
     print("student_results table created successfully");
   }
 
