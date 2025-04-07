@@ -17,6 +17,7 @@ import 'signupsqlite.dart'; // Import the signupsqlite.dart file
 import 'loginsqlite.dart'; // Import the loginsqlite.dart file
 import 'student_page.dart'; // Import the student_page.dart file
 import 'api_data.dart'; // Import the api_data.dart file
+import 'front.dart'; // Import the front.dart file
 
 void main() {
   runApp(MyApp());
@@ -108,6 +109,41 @@ class HomeScreen extends StatelessWidget {
                   context,
                   MaterialPageRoute(builder: (context) => StudentResultsPage()),
                 );
+              },
+            ),
+            ListTile(
+              title: const Text('Store Data'),
+              onTap: () async {
+                final newResult = await Navigator.push<Map<String, dynamic>>(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddResultPage(
+                      studentData: {
+                        "studentname": "Ali Ahmad",
+                        "fathername": "Shakeel Ahmad",
+                        "progname": "BS Information Technology",
+                        "shift": "Morning",
+                        "rollno": "BSITF22M26",
+                        "consider_status": "E"
+                      },
+                    ),
+                  ),
+                );
+
+                if (newResult != null) {
+                  // Show success message
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Result added successfully!')),
+                  );
+
+                  // Immediately navigate to StudentResultsPage with the new data
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => StudentResultsPage(initialData: [newResult]),
+                    ),
+                  );
+                }
               },
             ),
             ListTile(

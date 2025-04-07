@@ -3,6 +3,9 @@ import 'database_helper_api.dart';
 import 'api_service.dart';
 
 class StudentResultsPage extends StatefulWidget {
+  final List<Map<String, dynamic>>? initialData;
+
+  const StudentResultsPage({Key? key, this.initialData}) : super(key: key);
   @override
   _StudentResultsPageState createState() => _StudentResultsPageState();
 }
@@ -16,7 +19,21 @@ class _StudentResultsPageState extends State<StudentResultsPage> {
   @override
   void initState() {
     super.initState();
+    if (widget.initialData != null) {
+      // Use the passed-in data initially
+      _studentResults = widget.initialData!;
+      _loadDistinctSemesters(); // Just load semesters
+    }
     _loadLocalData();
+  }
+
+  Future<void> _loadDistinctSemesters() async {
+    _semesters = _studentResults
+        .map((r) => r['mysemester'].toString())
+        .toSet()
+        .toList()
+      ..sort();
+    setState(() {});
   }
 
   Future<void> _loadLocalData() async {
