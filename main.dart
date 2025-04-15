@@ -21,6 +21,7 @@ import 'front.dart'; // Import the front.dart file
 import 'storing_api.dart'; // Import the storing_api.dart file
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_data_page.dart'; // Import the firebase data page
+import 'qr_work.dart'; // Import the QR code page
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -149,6 +150,16 @@ class HomeScreen extends StatelessWidget {
                     ),
                   );
                 }
+              },
+            ),
+            ListTile(
+              title: const Text('QR Code Tools'),
+              leading: const Icon(Icons.qr_code),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => QRWorkPage()),
+                );
               },
             ),
             ListTile(

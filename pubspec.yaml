@@ -1,0 +1,49 @@
+name: new_project
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.6.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  shared_preferences: ^2.2.3
+  image_picker: ^1.0.4
+  sqflite: ^2.0.0+4
+  path: ^1.8.0
+  http: ^0.13.4
+  dropdown_search: ^5.0.6
+  firebase_core: ^2.15.1
+  cloud_firestore: ^4.17.5
+  qr_flutter: ^4.1.0  # For generating QR codes
+  mobile_scanner: ^3.4.1  # For scanning QR codes
+  share_plus: ^7.1.0  # To share files instead of saving to gallery
+  permission_handler: ^10.4.3  # To request permissions
+  path_provider: ^2.1.1  # For file operations
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.13.1  # Add this line
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/image/image1.jpg
+    - assets/image/image2.jpg
+    - assets/image/image3.jpg
+    - assets/image/image4.jpg
+    - assets/images.json
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/image/app_icon.png" # Add your app icon image here
+  adaptive_icon_foreground: "assets/image/app_icon.png" # (For Android Adaptive Icons)
+  adaptive_icon_background: "#ffffff" # Background color for adaptive icons
