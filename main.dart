@@ -18,8 +18,13 @@ import 'loginsqlite.dart'; // Import the loginsqlite.dart file
 import 'student_page.dart'; // Import the student_page.dart file
 import 'api_data.dart'; // Import the api_data.dart file
 import 'front.dart'; // Import the front.dart file
+import 'storing_api.dart'; // Import the storing_api.dart file
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_data_page.dart'; // Import the firebase data page
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();  // No options parameter
   runApp(MyApp());
 }
 
@@ -147,6 +152,16 @@ class HomeScreen extends StatelessWidget {
               },
             ),
             ListTile(
+              title: const Text('Firebase Tasks'),
+              leading: const Icon(Icons.cloud),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => FirebaseDataPage()),
+                );
+              },
+            ),
+            ListTile(
               title: const Text('SQlite'),
               onTap: () {
                 Navigator.push(
@@ -179,6 +194,16 @@ class HomeScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => CalculatorPage()),
+                );
+              },
+            ),
+            ListTile(
+              title: const Text('Add Grade'), // Menu item title
+              leading: const Icon(Icons.grade), // Optional icon
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AddGradePage()), // Navigate to AddGradePage
                 );
               },
             ),
