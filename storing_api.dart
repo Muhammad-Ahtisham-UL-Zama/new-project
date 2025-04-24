@@ -3,6 +3,8 @@ import 'package:dropdown_search/dropdown_search.dart'; // add this at the top
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
+import 'local_grades_screen.dart';
+import 'db_helper.dart';
 
 
 class AddGradePage extends StatefulWidget {
@@ -124,62 +126,22 @@ class _AddGradePageState extends State<AddGradePage> {
       return;
     }
 
-    setState(() {
-      _isLoading = true;
-      _errorMessage = '';
-      _successMessage = '';
-    });
-
-    final queryParams = {
-      'user_id': _submitUserIdController.text.trim(),
-      'course_name': _selectedCourseName!,
-      'semester_no': _semesterNoController.text.trim(),
-      'credit_hours': _creditHoursController.text.trim(),
+    final localData = {
+      'userId': _submitUserIdController.text.trim(),
+      'courseName': _selectedCourseName!,
+      'semesterNo': _semesterNoController.text.trim(),
+      'creditHours': _creditHoursController.text.trim(),
       'marks': _marksController.text.trim(),
     };
 
-    final uri = Uri.https(
-      'devtechtop.com',
-      '/management/public/api/grades',
-      queryParams,
-    );
+    await DBHelper.insertGrade(localData);
 
-    try {
-      final response = await http.get(uri).timeout(Duration(seconds: 15));
-      final responseData = json.decode(response.body);
-
-      print("Submit Response: $responseData");
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        _formKey.currentState!.reset();
-        setState(() {
-          _successMessage = 'Grade added successfully';
-          _selectedCourseId = null;
-          _selectedCourseName = null;
-        });
-
-        if (_submitUserIdController.text.trim() ==
-            _fetchUserIdController.text.trim()) {
-          await _fetchGradesByUserId(_fetchUserIdController.text.trim());
-        }
-      } else {
-        setState(() {
-          _errorMessage = responseData['message'] ?? 'Failed to submit grade';
-        });
-      }
-    } on TimeoutException {
-      setState(() {
-        _errorMessage = 'Request timed out. Please try again.';
-      });
-    } catch (error) {
-      setState(() {
-        _errorMessage = 'Error: ${error.toString()}';
-      });
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
+    _formKey.currentState!.reset();
+    setState(() {
+      _successMessage = 'Grade saved locally';
+      _selectedCourseId = null;
+      _selectedCourseName = null;
+    });
   }
 
 
@@ -535,6 +497,7 @@ class _AddGradePageState extends State<AddGradePage> {
                               return null;
                             },
                           ),
+
                           SizedBox(height: 16),
                           _buildTextField(
                             controller: _creditHoursController,
@@ -572,10 +535,37 @@ class _AddGradePageState extends State<AddGradePage> {
                                 valueColor:
                                 AlwaysStoppedAnimation<Color>(Colors.indigo),
                               ))
-                              : _buildGradientButton(
-                            'SUBMIT GRADE',
-                            Icons.check_circle,
-                            _submitForm,
+                              : Row(
+                            children: [
+                              Expanded(
+                                child: _buildGradientButton(
+                                  'SUBMIT GRADE',
+                                  Icons.check_circle,
+                                  _submitForm,
+                                ),
+                              ),
+                              SizedBox(width: 16),
+                              Expanded(
+                                child: ElevatedButton.icon(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => LocalGradesScreen()),
+                                    );
+                                  },
+                                  icon: Icon(Icons.storage),
+                                  label: Text('View Grades'),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.deepPurple,
+                                    foregroundColor: Colors.white,
+                                    padding: EdgeInsets.symmetric(vertical: 16),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -876,6 +866,7 @@ class _AddGradePageState extends State<AddGradePage> {
                   ),
                 ),
               ],
+
             ),
           ),
         ),
